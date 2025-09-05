@@ -1,6 +1,7 @@
 use anyhow::Result;
 
 mod cli;
+mod progress;
 mod reader;
 mod tile;
 mod transform;
@@ -10,7 +11,12 @@ mod writer;
 use cli::Cli;
 use tokio::task::JoinSet;
 
-use crate::{reader::ReadTileMsg, transformer::Transformer, writer::WriteTileMsg};
+use crate::{
+    progress::{Progress, ProgressMsg},
+    reader::ReadTileMsg,
+    transformer::Transformer,
+    writer::WriteTileMsg,
+};
 
 const QUEUE_CAPACITY: usize = 2_usize.pow(16);
 
@@ -20,16 +26,21 @@ async fn main() -> Result<()> {
 
     let (reader_tx, reader_rx) = flume::bounded::<ReadTileMsg>(QUEUE_CAPACITY);
     let (writer_tx, writer_rx) = flume::bounded::<WriteTileMsg>(QUEUE_CAPACITY);
+    let (progress_tx, progress_rx) = flume::unbounded::<ProgressMsg>();
 
     let mut js = JoinSet::new();
     let reader = reader::Reader::new(cli.input.clone()).await?;
     let transformer = Transformer::new(cli.transform);
     let writer =
         writer::Writer::new(cli.output.clone(), cli.force, reader.pmtiles_reader()).await?;
+    let progress = Progress::new();
 
-    js.spawn(async move { reader.run(reader_tx).await });
-    js.spawn_blocking(move || transformer.run(reader_rx, writer_tx));
-    js.spawn_blocking(move || writer.write(writer_rx));
+    let reader_progress_tx = progress_tx.clone();
+    js.spawn(async move { reader.run(reader_tx, reader_progress_tx).await });
+    let transformer_progress_tx = progress_tx.clone();
+    js.spawn_blocking(move || transformer.run(reader_rx, writer_tx, transformer_progress_tx));
+    js.spawn_blocking(move || writer.write(writer_rx, progress_tx));
+    js.spawn_blocking(move || progress.run(progress_rx));
 
     while let Some(res) = js.join_next().await {
         res??;

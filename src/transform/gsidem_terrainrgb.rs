@@ -40,7 +40,11 @@ impl TransformProcess for GsiDemPngToTerrainRgbPng {
                 }
                 out
             }
-            _ => bail!("Only 8-bit RGB/RGBA PNG supported"),
+            _ => bail!(
+                "Only 8-bit RGB/RGBA PNG supported, got: {:?} {:?}",
+                info.color_type,
+                info.bit_depth
+            ),
         };
 
         // Transform in-place, serial

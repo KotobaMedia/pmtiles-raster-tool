@@ -5,11 +5,15 @@ use bytes::Bytes;
 use flume::Receiver;
 use pmtiles::{PmTilesStreamWriter, PmTilesWriter};
 
-use crate::reader::PmTilesReader;
+use crate::{
+    progress::{ProgressMsg, ProgressSender},
+    reader::PmTilesReader,
+    tile::Tile,
+};
 
 pub struct WriteTileMsg {
     pub index: usize,
-    pub tile_id: pmtiles::TileId,
+    pub tile: Tile,
     pub tile_data: Bytes,
 }
 
@@ -57,7 +61,11 @@ impl Writer {
         Ok(Self { output, out_pmt })
     }
 
-    pub fn write(mut self, tile_rx: Receiver<WriteTileMsg>) -> Result<()> {
+    pub fn write(
+        mut self,
+        tile_rx: Receiver<WriteTileMsg>,
+        progress_tx: ProgressSender,
+    ) -> Result<()> {
         let mut next = 0usize;
         // reorder buffer
         // TODO: use a more efficient structure
@@ -65,13 +73,23 @@ impl Writer {
         for msg in tile_rx {
             buf.insert(msg.index, msg);
             while let Some(msg) = buf.remove(&next) {
-                self.out_pmt.add_tile(msg.tile_id.into(), &msg.tile_data)?;
+                self.out_pmt.add_tile((*msg.tile).into(), &msg.tile_data)?;
+                progress_tx
+                    .send(ProgressMsg::Written(msg.tile))
+                    .context("Failed to send progress message")?;
                 next += 1;
             }
         }
         println!("Finished writing tiles, finalizing archive...");
+        progress_tx.send(ProgressMsg::Log(
+            "Finished writing tiles, finalizing archive...".to_string(),
+        ))?;
         self.out_pmt.finalize()?;
-        println!("Finished writing to {}.", self.output.display());
+        progress_tx.send(ProgressMsg::Log(format!(
+            "Finished writing to {}.",
+            self.output.display()
+        )))?;
+        progress_tx.send(ProgressMsg::Finished())?;
         Ok(())
     }
 }
