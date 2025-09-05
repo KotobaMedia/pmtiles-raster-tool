@@ -1,7 +1,10 @@
 [package]
 name = "pmtiles-raster-tool"
 version = "0.1.0"
+authors = ["Keitaroh Kobayashi <keita@kotobamedia.com>"]
+repository = "https://github.com/KotobaMedia/pmtiles-raster-tool"
 edition = "2024"
+license = "MIT"
 
 [dependencies]
 anyhow = "1"
