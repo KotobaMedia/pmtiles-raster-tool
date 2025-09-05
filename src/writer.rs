@@ -20,12 +20,22 @@ pub struct Writer {
 
 impl Writer {
     pub async fn new(output: PathBuf, force: bool, in_pmt: PmTilesReader) -> Result<Self> {
-        let out_pmt_f = File::options()
-            .create_new(!force)
-            .write(true)
-            .open(&output)
-            .context("Failed to open output file. Hint: try specifying --force if you want to overwrite an existing file.")?;
-        out_pmt_f.set_len(0)?;
+        // Open output according to `force` semantics:
+        // - force = true  -> create if missing, overwrite if exists (truncate)
+        // - force = false -> create only, fail if already exists
+        let out_pmt_f = if force {
+            File::options()
+                .create(true)
+                .truncate(true)
+                .write(true)
+                .open(&output)
+        } else {
+            File::options()
+                .create_new(true)
+                .write(true)
+                .open(&output)
+        }
+        .context("Failed to open output file. Hint: try specifying --force if you want to overwrite an existing file.")?;
 
         let header = in_pmt.get_header();
         let metadata = in_pmt.get_metadata().await?;

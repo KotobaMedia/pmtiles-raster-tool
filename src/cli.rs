@@ -23,6 +23,9 @@ pub struct Cli {
     /// Output PMTiles file path
     #[arg(value_name = "OUTPUT")]
     pub output: PathBuf,
+
+    #[arg(long, short, help = "Overwrite output if it already exists")]
+    pub force: bool,
 }
 
 /// Resolved, strongly-typed arguments
@@ -31,6 +34,7 @@ pub struct ResolvedCli {
     pub input: PathBuf,
     pub transform: Transform,
     pub output: PathBuf,
+    pub force: bool,
 }
 
 impl Cli {
@@ -52,6 +56,7 @@ impl Cli {
             input: cli.input,
             transform: cli.transform,
             output: cli.output,
+            force: cli.force,
         })
     }
 }

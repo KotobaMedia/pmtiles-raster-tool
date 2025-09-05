@@ -1,9 +1,10 @@
-use anyhow::Result;
+use anyhow::{Context, Result};
 use flume::{Receiver, Sender};
 use rayon::prelude::*;
 
 use crate::{
     reader::ReadTileMsg,
+    tile::tile_to_string,
     transform::{Transform, TransformProcess},
     writer::WriteTileMsg,
 };
@@ -23,7 +24,12 @@ impl Transformer {
         input.into_iter().par_bridge().try_for_each_with(
             (output, self.transform.clone()),
             |(output, transform), msg| {
-                let transformed_data = transform.transform(&msg.tile_data)?;
+                let transformed_data = transform.transform(&msg.tile_data).with_context(|| {
+                    format!(
+                        "while transforming tile {}",
+                        tile_to_string(msg.tile_id.into())
+                    )
+                })?;
                 output.send(WriteTileMsg {
                     index: msg.index,
                     tile_id: msg.tile_id,
