@@ -152,13 +152,11 @@ impl TransformProcess for GsiDemPngToTerrainRgbPng {
         // Transform in-place, serial
         transform_rgba8_in_place(&mut data);
 
-        // Encode with low-latency settings
         let mut out = Vec::with_capacity(data.len() + 1024);
         {
             let mut enc = Encoder::new(&mut out, w, h);
             enc.set_color(ColorType::Rgba);
             enc.set_depth(BitDepth::Eight);
-            enc.set_compression(png::Compression::Fast);
             let mut writer = enc.write_header().context("write header")?;
             writer
                 .write_image_data(&data)
