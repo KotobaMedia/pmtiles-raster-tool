@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 use std::str::FromStr;
 
-use anyhow::{Result, anyhow};
+use anyhow::Result;
 use clap::Parser;
 
 use crate::transform::Transform;
@@ -44,12 +44,9 @@ impl Cli {
         // Transform is now a required positional argument
         // Validate transform via FromStr (clap already invokes it)
         // But ensure we fail early if somehow empty
-        let _ = Transform::from_str(
-            match cli.transform {
-                Transform::GsiDemPngToTerrainRgbPng(_) => "gsidempng-to-terrainrgbpng",
-            },
-        )
-        .map_err(|e| anyhow!(e))?;
+        Transform::from_str(match cli.transform {
+            Transform::GsiDemPngToTerrainRgbPng(_) => "gsidempng-to-terrainrgbpng",
+        })?;
 
         Ok(ResolvedCli {
             input: cli.input,
