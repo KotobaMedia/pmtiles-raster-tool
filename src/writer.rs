@@ -73,7 +73,7 @@ impl Writer {
         for msg in tile_rx {
             buf.insert(msg.index, msg);
             while let Some(msg) = buf.remove(&next) {
-                self.out_pmt.add_tile((*msg.tile).into(), &msg.tile_data)?;
+                self.out_pmt.add_tile((*msg.tile), &msg.tile_data)?;
                 progress_tx
                     .send(ProgressMsg::Written(msg.tile))
                     .context("Failed to send progress message")?;

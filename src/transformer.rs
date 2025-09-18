@@ -31,7 +31,7 @@ impl Transformer {
             |(output, transform), msg| {
                 let transformed_data = transform
                     .transform(&msg.tile_data)
-                    .with_context(|| format!("while transforming tile {}", msg.tile.to_string()))?;
+                    .with_context(|| format!("while transforming tile {}", msg.tile))?;
                 output.send(WriteTileMsg {
                     index: msg.index,
                     tile: msg.tile.clone(),
