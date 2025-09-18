@@ -45,10 +45,9 @@ impl Cli {
         // Validate transform via FromStr (clap already invokes it)
         // But ensure we fail early if somehow empty
         let _ = Transform::from_str(
-            &(match cli.transform {
+            match cli.transform {
                 Transform::GsiDemPngToTerrainRgbPng(_) => "gsidempng-to-terrainrgbpng",
-            })
-            .to_string(),
+            },
         )
         .map_err(|e| anyhow!(e))?;
 
