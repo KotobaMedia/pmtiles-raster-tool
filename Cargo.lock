@@ -657,8 +657,7 @@ checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
 [[package]]
 name = "pmtiles"
 version = "0.16.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e1b66bf92795a1ed0845a4b271c88dd5e787514df655710859970306c47d0c56"
+source = "git+https://github.com/keichan34/pmtiles-rs?branch=writer-dedup#4cc4dd0c6430f86436ec36c851db78d224c4d99f"
 dependencies = [
  "async-compression",
  "async-stream",
@@ -670,6 +669,7 @@ dependencies = [
  "futures-util",
  "thiserror",
  "tokio",
+ "twox-hash",
  "varint-rs",
 ]
 
@@ -947,6 +947,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "twox-hash"
+version = "2.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9ea3136b675547379c4bd395ca6b938e5ad3c3d20fad76e7fe85f9e0d011419c"
+
+[[package]]
 name = "unicode-ident"
 version = "1.0.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1217,8 +1223,3 @@ name = "zlib-rs"
 version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2f06ae92f42f5e5c42443fd094f245eb656abf56dd7cce9b8b263236565e00f2"
-
-[[patch.unused]]
-name = "pmtiles"
-version = "0.15.0"
-source = "git+https://github.com/KotobaMedia/pmtiles-rs?branch=main#f323cf456107c5188acdd64587e31ba9acfa8f22"

@@ -19,5 +19,5 @@ rayon = "1.11"
 tokio = { version = "1", features = ["full"] }
 
 [patch.crates-io]
-pmtiles = { git = "https://github.com/KotobaMedia/pmtiles-rs", branch = "main" }
+pmtiles = { git = "https://github.com/keichan34/pmtiles-rs", branch = "writer-dedup" }
 # pmtiles = { path = "../pmtiles-rs-km" }

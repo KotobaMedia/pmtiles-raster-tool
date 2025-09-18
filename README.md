@@ -1,6 +1,12 @@
 # pmtiles-raster-tool
 
+[![Crates.io Version](https://img.shields.io/crates/v/pmtiles-raster-tool)](https://crates.io/crates/pmtiles-raster-tool)
+
 A tool to transform raster tiles
+
+## Installation
+
+[Pre-compiled binaries available in GitHub Releases](https://github.com/KotobaMedia/pmtiles-raster-tool/releases/latest)
 
 ## Usage
 
