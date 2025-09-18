@@ -5,6 +5,7 @@ authors = ["Keitaroh Kobayashi <keita@kotobamedia.com>"]
 repository = "https://github.com/KotobaMedia/pmtiles-raster-tool"
 edition = "2024"
 license = "MIT"
+exclude = [".github"]
 
 [dependencies]
 anyhow = "1"
