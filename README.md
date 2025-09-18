@@ -2,7 +2,7 @@
 
 [![Crates.io Version](https://img.shields.io/crates/v/pmtiles-raster-tool)](https://crates.io/crates/pmtiles-raster-tool)
 
-A tool to transform raster tiles
+A tool to transform raster tiles in PMTiles archives
 
 ## Installation
 

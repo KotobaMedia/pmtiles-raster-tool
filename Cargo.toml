@@ -1,5 +1,6 @@
 [package]
 name = "pmtiles-raster-tool"
+description = "A tool to transform raster tiles in PMTiles archives"
 version = "0.1.0"
 authors = ["Keitaroh Kobayashi <keita@kotobamedia.com>"]
 repository = "https://github.com/KotobaMedia/pmtiles-raster-tool"
